@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html"; charset="utf-8" />
+<title>dataBindOne</title>
+</head>
+<body>
+<script type="text/javascript">
+function Oberserve(data){
+  this.data = data;
+  this.bianli(this.data);
+}
+//遍历属性值
+Oberserve.prototype.bianli=function(obj){
+  var val = null;
+  for(key in obj){
+    if(obj.hasOwnProperty(key)){
+      val = obj[key];
+      if(typeof(val)==="object"&&!!val){
+          new Oberserve(val);
+      }
+          this.xianshi(key,val);
+    }
+  }
+}
+//提示改变动作
+Oberserve.prototype.xianshi=function(key,val){
+  Object.defineProperty(this.data,key,{
+    enumerable:true,//是否能在for...in循环中遍历出来或在Object.keys中列举出来。
+    configurable:true,//如果为false，则任何尝试删除目标属性或修改属性以下特性（writable, configurable, enumerable）的行为将被无效化。
+    get:function(){   // 一旦目标属性被访问就会调回此方法，并将此方法的运算结果返回用户。
+      console.log("你访问了"+key);
+      return val;
+    },
+    set:function(newval){  //一旦目标属性被赋值，就会调回此方法。
+      console.log("你改变了"+key);
+      console.log("现在的"+key+"="+newval);
+      if(newval===val)return;
+      val = newval;
+    }
+  })
+}
+var data = {
+  message:{
+    name:"dujiahui",
+    age:"22"
+  },
+  user:{
+    city:"beijing"
+  }
+};
+
+var app1 = new Oberserve(data);
+
+</script>  
+</body>
+</html>
